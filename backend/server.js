@@ -22,7 +22,12 @@ app.use(cors());
 app.use(express.json());
 app.get("/", (_req, res) => res.redirect("http://localhost:5173/"));
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const databaseUrl = process.env.DATABASE_URL;
+const useDatabaseSsl = String(process.env.DATABASE_SSL || "").toLowerCase() === "true";
+const pool = new Pool({
+  connectionString: databaseUrl,
+  ssl: useDatabaseSsl ? { rejectUnauthorized: false } : false
+});
 const scryptAsync = util.promisify(crypto.scrypt);
 const sessions = new Map();
 const SESSION_TTL_MS = 1000 * 60 * 60 * 8;
@@ -1006,6 +1011,6 @@ initDb()
     });
   })
   .catch((e) => {
-    console.error("Database connection failed. Check DATABASE_URL in backend/.env", e);
+    console.error("Database connection failed. Check DATABASE_URL and DATABASE_SSL in backend/.env (or Render env).", e);
     process.exit(1);
   });
