@@ -1,4 +1,5 @@
-export const API_BASE = "http://localhost:3000";
+const apiHost = window.location.hostname || "localhost";
+export const API_BASE = `http://${apiHost}:3000`;
 
 export function getToken() { return localStorage.getItem("token") || ""; }
 export function getUser() { const raw = localStorage.getItem("user"); return raw ? JSON.parse(raw) : null; }

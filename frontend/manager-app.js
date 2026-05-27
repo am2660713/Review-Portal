@@ -1,4 +1,4 @@
-import { api, clearSession, getUser, requireRole } from "./auth.js";
+import { API_BASE, api, clearSession, getUser, requireRole } from "./auth.js";
 
 requireRole("manager");
 const user = getUser();
@@ -105,7 +105,7 @@ const downloadBtn = document.getElementById("downloadBtn");
 if (downloadBtn) {
   downloadBtn.onclick = async () => {
     const token = localStorage.getItem("token") || "";
-    const res = await fetch("http://localhost:3000/api/reviews/download-docx", { headers: { Authorization: `Bearer ${token}` } });
+    const res = await fetch(`${API_BASE}/api/reviews/download-docx`, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) { assignStatus.textContent = "Download failed"; return; }
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
