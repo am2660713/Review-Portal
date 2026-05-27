@@ -1,0 +1,14 @@
+﻿<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Team Lead Dashboard</title><link rel="stylesheet" href="./styles.css" /></head>
+<body>
+  <main class="wrap">
+    <section class="hero card"><p class="tag">Team Lead Dashboard</p><h1 id="pageTitle">Team Lead Reviews</h1><p>Separate tabs for your self review and Employee reviews.</p><div class="row-actions"><button id="logoutBtn" class="secondary">Logout</button></div></section>
+    <section class="card"><div class="row-actions"><button id="tabSelf" type="button">My Self Review Forms</button><button id="tabEmp" type="button" class="secondary">Employee Review Forms</button></div></section>
+    <section id="panelSelf" class="card"><h2 id="selfHeading">My Self Review Forms</h2><div id="selfAssignmentList" class="feedback-list"></div></section>
+    <section id="panelEmp" class="card" style="display:none;"><h2 id="empHeading">Employee Review Forms</h2><div class="grid three"><label>Employee<select id="employeeSelect"></select></label><label>Review Year<input id="assignYear" type="number" value="2026" required /></label><button id="assignBtn" type="button">Assign Review</button></div><div class="grid two"><label>Due Date<input id="assignDueDate" type="date" required /></label></div><p id="assignStatus" class="status"></p><div id="empAssignmentList" class="feedback-list"></div></section>
+    <section class="card"><h2>Employee Review Visibility</h2><p class="meta">You can view employee self-review details before submitting your review.</p></section>
+  </main>
+  <script type="module" src="./teamlead-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+﻿<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Admin Allocation</title><link rel="stylesheet" href="./styles.css" /></head>
+<body>
+  <main class="wrap">
+    <section class="hero card">
+      <p class="tag">Admin Control</p>
+      <h1>Review Allocation Center</h1>
+      <p>Allocate by hierarchy: Team Lead -> Employee, Manager -> Team Lead, Admin -> Manager.</p>
+      <div class="row-actions"><button id="logoutBtn" class="secondary">Logout</button><button id="downloadBtn" class="secondary">Download All Reviews (.docx)</button></div>
+    </section>
+    <section class="card">
+      <h2>Allocate Review Form</h2>
+      <div class="grid three"><label>Assignee (Employee/TeamLead/Manager)<select id="employeeSelect"></select></label><label>Reviewer (Admin/TeamLead/Manager)<select id="managerSelect"></select></label><label>Review Year<input id="reviewYear" type="number" value="2026" /></label></div>
+      <div class="grid two"><label>Due Date<input id="dueDate" type="date" required /></label></div>
+      <div class="row-actions">
+        <button id="assignBtn" type="button">Allocate Review</button>
+        <button id="bulkAssignBtn" type="button" class="secondary">Allocate All (One Click)</button>
+      </div>
+      <p id="assignStatus" class="status"></p>
+    </section>
+    <section class="card">
+      <h2>Add New Joiner (Single Entry)</h2>
+      <div class="grid three">
+        <label>Employee Name<input id="joinerEmployeeName" type="text" /></label>
+        <label>Employee Email<input id="joinerEmployeeEmail" type="email" /></label>
+        <label>Employee Password<input id="joinerEmployeePassword" type="text" /></label>
+      </div>
+      <div class="grid two">
+        <label>Team Lead<select id="joinerLeadSelect"></select></label>
+        <label>Manager<select id="joinerManagerSelect"></select></label>
+      </div>
+      <div class="row-actions">
+        <button id="addJoinerBtn" type="button">Add New Joiner Flow</button>
+      </div>
+      <p id="joinerStatus" class="status"></p>
+    </section>
+    <section class="card">
+      <h2>Bulk Add (CSV Upload)</h2>
+      <div class="grid two">
+        <label>CSV File<input id="bulkCsvFile" type="file" accept=".csv,text/csv" /></label>
+      </div>
+      <div class="row-actions">
+        <button id="downloadTemplateBtn" type="button" class="secondary">Download Excel Template (CSV)</button>
+        <button id="bulkOnboardBtn" type="button">Upload and Add All</button>
+      </div>
+      <p id="bulkOnboardStatus" class="status"></p>
+    </section>
+    <section class="card">
+      <h2>Mid-Year Role Change</h2>
+      <div class="grid two">
+        <label>Promote Employee to Team Lead<select id="promoteEmployeeSelect"></select></label>
+        <label>Assign Reporting Manager<select id="promoteManagerSelect"></select></label>
+      </div>
+      <div class="row-actions">
+        <button id="promoteBtn" type="button">Promote and Update Hierarchy</button>
+      </div>
+      <p id="promoteStatus" class="status"></p>
+    </section>
+    <section class="card">
+      <h2>Team Lead and Employee Transfer</h2>
+      <div class="grid two">
+        <label>Promote Team Lead to Manager<select id="promoteLeadToManagerSelect"></select></label>
+        <label>New Manager for Team Lead<select id="reassignLeadManagerSelect"></select></label>
+      </div>
+      <div class="row-actions">
+        <button id="promoteLeadBtn" type="button">Promote Team Lead to Manager</button>
+        <button id="reassignLeadBtn" type="button" class="secondary">Reassign Team Lead to Manager</button>
+      </div>
+      <div class="grid two">
+        <label>Employee to Move<select id="moveEmployeeSelect"></select></label>
+        <label>New Team Lead<select id="moveLeadSelect"></select></label>
+      </div>
+      <div class="row-actions">
+        <button id="moveEmployeeBtn" type="button">Move Employee to New Team Lead</button>
+      </div>
+      <p id="transferStatus" class="status"></p>
+    </section>
+    <section class="card"><h2>All Assignments</h2><button id="refreshBtn" class="secondary">Refresh</button><div id="overview" class="feedback-list"></div></section>
+  </main>
+  <script type="module" src="./admin-app.js"></script>
+</body>
+</html>

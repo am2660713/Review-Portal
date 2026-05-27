@@ -1,0 +1,15 @@
+{
+  "name": "feedback-form-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Employee feedback app with separate frontend and backend",
+  "scripts": {
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start": "cd backend && npm run start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

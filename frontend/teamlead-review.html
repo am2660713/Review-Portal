@@ -1,0 +1,32 @@
+﻿<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Team Lead Employee Review</title><link rel="stylesheet" href="./styles.css" /></head>
+<body>
+  <main class="wrap">
+    <section class="hero card"><p class="tag">Team Lead Evaluation</p><h1>Employee Review Form</h1><button id="backBtn" class="secondary">Back</button><button id="logoutBtn" class="secondary">Logout</button></section>
+    <section class="card">
+      <form id="reviewForm">
+        <label>Assignment ID<input id="assignmentId" type="number" required readonly /></label>
+        <div class="grid three">
+          <label>Quality<select id="quality" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Productivity<select id="productivity" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Job Knowledge<select id="jobKnowledge" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Communication<select id="communication" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Teamwork<select id="teamwork" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Initiative<select id="initiative" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Reliability<select id="reliability" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Leadership<select id="leadership" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Overall<select id="overallRating" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+        </div>
+        <label>Strengths<textarea id="strengths" rows="3" required></textarea></label>
+        <label>Improvements<textarea id="improvements" rows="3" required></textarea></label>
+        <label>Development Plan<textarea id="developmentPlan" rows="3" required></textarea></label>
+        <label>Comments<textarea id="comments" rows="4" required></textarea></label>
+        <button type="submit">Submit Employee Review</button>
+        <p id="status" class="status"></p>
+      </form>
+    </section>
+  </main>
+  <script type="module" src="./teamlead-review-app.js"></script>
+</body>
+</html>

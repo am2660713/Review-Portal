@@ -1,0 +1,19 @@
+﻿<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Manager Dashboard</title><link rel="stylesheet" href="./styles.css" /></head>
+<body>
+  <main class="wrap">
+    <section class="hero card">
+      <p class="tag">Manager Dashboard</p>
+      <h1 id="pageTitle">Manager Reviews</h1>
+      <p>Separate tabs for your self review and Team Lead reviews.</p>
+      <div class="row-actions"><button id="logoutBtn" class="secondary">Logout</button><button id="downloadBtn" class="secondary">Download Reviews (.docx)</button></div>
+    </section>
+    <section class="card"><div class="row-actions"><button id="tabSelf" type="button">My Self Review Forms</button><button id="tabTeam" type="button" class="secondary">Team Lead Review Forms</button></div></section>
+    <section id="panelSelf" class="card"><h2 id="selfHeading">My Self Review Forms</h2><div id="selfAssignmentList" class="feedback-list"></div></section>
+    <section id="panelTeam" class="card" style="display:none;"><h2 id="teamHeading">Team Lead Review Forms</h2><div class="grid three"><label>Team Lead<select id="employeeSelect"></select></label><label>Review Year<input id="assignYear" type="number" value="2026" required /></label><button id="assignBtn" type="button">Assign Review</button></div><div class="grid two"><label>Due Date<input id="assignDueDate" type="date" required /></label></div><p id="assignStatus" class="status"></p><div id="teamAssignmentList" class="feedback-list"></div></section>
+    <section class="card" id="hierarchyPanel"><h2>Hierarchy Overview</h2><div id="hierarchyOverview" class="feedback-list"></div></section>
+  </main>
+  <script type="module" src="./manager-app.js"></script>
+</body>
+</html>

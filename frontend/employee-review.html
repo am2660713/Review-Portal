@@ -1,0 +1,63 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Review Form</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero card">
+      <p class="tag">Performance Review</p>
+      <h1>Self Review Form</h1>
+      <p>Complete all required points and submit for the selected assignment.</p>
+      <button id="backBtn" class="secondary">Back to Assignments</button>
+      <button id="logoutBtn" class="secondary">Logout</button>
+    </section>
+
+    <section class="card">
+      <h2>Self Review (Excel Coverage)</h2>
+      <div class="rating-guide">
+        <h3>Rating Guide (1 to 5)</h3>
+        <ul>
+          <li><strong>1:</strong> Needs major improvement</li>
+          <li><strong>2:</strong> Below expectations</li>
+          <li><strong>3:</strong> Meets expectations</li>
+          <li><strong>4:</strong> Exceeds expectations</li>
+          <li><strong>5:</strong> Outstanding performance</li>
+        </ul>
+      </div>
+      <form id="selfReviewForm">
+        <label>Assignment ID<input id="assignmentId" type="number" required readonly /></label>
+        <h3>Consistency Scale Ratings (1-5)</h3>
+        <div class="grid three">
+          <label>Innovation<select id="innovation" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Goal Achievement<select id="goalAchievement" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Team Work<select id="teamWork" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Commitment<select id="commitment" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Technical Learning<select id="technicalLearning" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Software Support<select id="softwareSupport" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Graphics Learning<select id="graphicsLearning" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Site Activities<select id="siteActivitiesRating" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Communication<select id="communication" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Problem Solving<select id="problemSolving" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Time Management<select id="timeManagement" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <label>Overall Rating<select id="overallRating" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+        </div>
+        <h3>Detailed Inputs</h3>
+        <label>Software / Hardware Skills Learned<textarea id="skillsLearned" rows="3" required></textarea></label>
+        <label>Programming and Development Work<textarea id="softwareHardware" rows="3" required></textarea></label>
+        <label>Graphics Software Learned<textarea id="graphicsSkills" rows="3" required></textarea></label>
+        <label>Site Activities<textarea id="siteActivities" rows="3" required></textarea></label>
+        <label>Key Achievements<textarea id="achievements" rows="3" required></textarea></label>
+        <label>Challenges / Improvement Areas<textarea id="challenges" rows="3" required></textarea></label>
+        <label>Self Comments<textarea id="selfComments" rows="4" required></textarea></label>
+        <button type="submit">Submit Self Review</button>
+        <p id="status" class="status"></p>
+      </form>
+    </section>
+  </main>
+  <script type="module" src="./employee-review-app.js"></script>
+</body>
+</html>
