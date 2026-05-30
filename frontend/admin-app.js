@@ -251,7 +251,20 @@ async function loadUsers() {
 function renderSelf(row) {
   if (!row.self_payload) return "<div class='meta'>Assignee self review not submitted.</div>";
   const p = row.self_payload;
-  return `<details class="inline-details"><summary>Assignee Filled Details</summary><div class="meta"><strong>Overall:</strong> ${row.self_overall_rating ?? "-"} / 5</div><div class="meta"><strong>Innovation:</strong> ${p.innovation ?? "-"} | <strong>Goal:</strong> ${p.goalAchievement ?? "-"} | <strong>Team:</strong> ${p.teamWork ?? "-"}</div><div class="meta"><strong>Comments:</strong> ${p.selfComments ?? "-"}</div></details>`;
+  return `<details class="inline-details"><summary>Assignee Filled Details</summary>
+    <div class="meta"><strong>Overall:</strong> ${row.self_overall_rating ?? "-"} / 5</div>
+    <div class="meta"><strong>Innovation:</strong> ${p.innovation ?? "-"} | <strong>Goal:</strong> ${p.goalAchievement ?? "-"} | <strong>Team Work:</strong> ${p.teamWork ?? "-"}</div>
+    <div class="meta"><strong>Commitment:</strong> ${p.commitment ?? "-"} | <strong>Technical:</strong> ${p.technicalLearning ?? "-"} | <strong>Support:</strong> ${p.softwareSupport ?? "-"}</div>
+    <div class="meta"><strong>Graphics:</strong> ${p.graphicsLearning ?? "-"} | <strong>Site:</strong> ${p.siteActivities ?? "-"} | <strong>Communication:</strong> ${p.communication ?? "-"}</div>
+    <div class="meta"><strong>Problem Solving:</strong> ${p.problemSolving ?? "-"} | <strong>Time:</strong> ${p.timeManagement ?? "-"}</div>
+    <div class="meta"><strong>Skills Learned:</strong> ${p.skillsLearned ?? "-"}</div>
+    <div class="meta"><strong>Development Work:</strong> ${p.softwareHardware ?? "-"}</div>
+    <div class="meta"><strong>Graphics Skills:</strong> ${p.graphicsSkills ?? "-"}</div>
+    <div class="meta"><strong>Site Activities Summary:</strong> ${p.siteActivitiesSummary ?? "-"}</div>
+    <div class="meta"><strong>Achievements:</strong> ${p.achievements ?? "-"}</div>
+    <div class="meta"><strong>Challenges:</strong> ${p.challenges ?? "-"}</div>
+    <div class="meta"><strong>Self Comments:</strong> ${p.selfComments ?? "-"}</div>
+  </details>`;
 }
 
 function renderReviewer(row) {

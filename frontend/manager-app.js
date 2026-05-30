@@ -51,10 +51,25 @@ async function loadSelfAssignments() {
 
 async function loadTeamAssignments() {
   const items = await api("/api/manager/assignments");
+  const renderSelfPayload = (p) => {
+    if (!p) return `<div class="meta">Self review not submitted yet.</div>`;
+    return `<div class="meta"><strong>Overall notes:</strong> ${p.selfComments ?? "-"}</div>
+      <div class="meta"><strong>Innovation:</strong> ${p.innovation ?? "-"} | <strong>Goal:</strong> ${p.goalAchievement ?? "-"} | <strong>Team Work:</strong> ${p.teamWork ?? "-"}</div>
+      <div class="meta"><strong>Commitment:</strong> ${p.commitment ?? "-"} | <strong>Technical:</strong> ${p.technicalLearning ?? "-"} | <strong>Support:</strong> ${p.softwareSupport ?? "-"}</div>
+      <div class="meta"><strong>Graphics:</strong> ${p.graphicsLearning ?? "-"} | <strong>Site:</strong> ${p.siteActivities ?? "-"} | <strong>Communication:</strong> ${p.communication ?? "-"}</div>
+      <div class="meta"><strong>Problem Solving:</strong> ${p.problemSolving ?? "-"} | <strong>Time:</strong> ${p.timeManagement ?? "-"}</div>
+      <div class="meta"><strong>Skills Learned:</strong> ${p.skillsLearned ?? "-"}</div>
+      <div class="meta"><strong>Development Work:</strong> ${p.softwareHardware ?? "-"}</div>
+      <div class="meta"><strong>Graphics Skills:</strong> ${p.graphicsSkills ?? "-"}</div>
+      <div class="meta"><strong>Site Activities Summary:</strong> ${p.siteActivitiesSummary ?? "-"}</div>
+      <div class="meta"><strong>Achievements:</strong> ${p.achievements ?? "-"}</div>
+      <div class="meta"><strong>Challenges:</strong> ${p.challenges ?? "-"}</div>`;
+  };
   teamList.innerHTML = items.map(i => `
     <article class="feedback-item">
       <strong>Assignment #${i.id} - ${i.assignee_name}</strong>
       <div class="meta">${i.assignee_email} | Year: ${i.review_year} | Due: ${i.due_date ? String(i.due_date).slice(0,10) : "-"} | Self Submitted: ${i.self_submitted ? "Yes" : "No"} | Status: ${i.status}</div>
+      <details class="inline-details"><summary>View Team Lead Self Review</summary>${renderSelfPayload(i.self_payload)}</details>
       <div class="row-actions">
         <button type="button" class="open-review-btn" data-id="${i.id}" ${i.status === "closed" || i.status === "reviewer_submitted" ? "disabled" : ""}>${i.status === "closed" || i.status === "reviewer_submitted" ? "Filled / Locked" : "Open Team Lead Review Form"}</button>
         <button type="button" class="danger-btn" data-delete-id="${i.id}" ${i.status === "closed" || i.status === "reviewer_submitted" ? "disabled" : ""}>Delete Review Form</button>
@@ -76,13 +91,27 @@ async function loadTeamAssignments() {
 
 async function loadHierarchyOverview() {
   const data = await api("/api/manager/hierarchy-overview");
+  const renderSelfPayload = (p) => {
+    if (!p) return `<div class="meta">Not submitted yet.</div>`;
+    return `<div class="meta"><strong>Overall notes:</strong> ${p.selfComments ?? "-"}</div>
+      <div class="meta"><strong>Innovation:</strong> ${p.innovation ?? "-"} | <strong>Goal:</strong> ${p.goalAchievement ?? "-"} | <strong>Team Work:</strong> ${p.teamWork ?? "-"}</div>
+      <div class="meta"><strong>Commitment:</strong> ${p.commitment ?? "-"} | <strong>Technical:</strong> ${p.technicalLearning ?? "-"} | <strong>Support:</strong> ${p.softwareSupport ?? "-"}</div>
+      <div class="meta"><strong>Graphics:</strong> ${p.graphicsLearning ?? "-"} | <strong>Site:</strong> ${p.siteActivities ?? "-"} | <strong>Communication:</strong> ${p.communication ?? "-"}</div>
+      <div class="meta"><strong>Problem Solving:</strong> ${p.problemSolving ?? "-"} | <strong>Time:</strong> ${p.timeManagement ?? "-"}</div>
+      <div class="meta"><strong>Skills Learned:</strong> ${p.skillsLearned ?? "-"}</div>
+      <div class="meta"><strong>Development Work:</strong> ${p.softwareHardware ?? "-"}</div>
+      <div class="meta"><strong>Graphics Skills:</strong> ${p.graphicsSkills ?? "-"}</div>
+      <div class="meta"><strong>Site Activities Summary:</strong> ${p.siteActivitiesSummary ?? "-"}</div>
+      <div class="meta"><strong>Achievements:</strong> ${p.achievements ?? "-"}</div>
+      <div class="meta"><strong>Challenges:</strong> ${p.challenges ?? "-"}</div>`;
+  };
   const leadCards = data.teamLeads.map(l => `
     <article class="feedback-item">
       <strong>Team Lead: ${l.teamlead_name}</strong>
       <div class="meta">${l.teamlead_email} | Year: ${l.review_year} | Status: ${l.status}</div>
       <details class="inline-details">
         <summary>Team Lead Self Review</summary>
-        ${l.self_payload ? `<div class="meta">Innovation: ${l.self_payload.innovation ?? "-"} | Goal: ${l.self_payload.goalAchievement ?? "-"} | Team: ${l.self_payload.teamWork ?? "-"}</div><div class="meta">Comments: ${l.self_payload.selfComments ?? "-"}</div>` : `<div class="meta">Not submitted yet.</div>`}
+        ${renderSelfPayload(l.self_payload)}
       </details>
     </article>
   `);
@@ -93,7 +122,7 @@ async function loadHierarchyOverview() {
       <div class="meta">${e.employee_email} | Team Lead: ${e.teamlead_name} | Year: ${e.review_year} | Status: ${e.status}</div>
       <details class="inline-details">
         <summary>Employee Self Review</summary>
-        ${e.self_payload ? `<div class="meta">Innovation: ${e.self_payload.innovation ?? "-"} | Goal: ${e.self_payload.goalAchievement ?? "-"} | Team: ${e.self_payload.teamWork ?? "-"}</div><div class="meta">Comments: ${e.self_payload.selfComments ?? "-"}</div>` : `<div class="meta">Not submitted yet.</div>`}
+        ${renderSelfPayload(e.self_payload)}
       </details>
     </article>
   `);

@@ -158,6 +158,10 @@ async function initDb() {
   await pool.query("ALTER TABLE review_assignments ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'assigned'");
   await pool.query("ALTER TABLE review_assignments ADD COLUMN IF NOT EXISTS created_by INTEGER REFERENCES users(id)");
   await pool.query("ALTER TABLE review_assignments ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+  await pool.query("UPDATE review_assignments SET status = 'self_submitted' WHERE status = 'employee_submitted'");
+  await pool.query("UPDATE review_assignments SET status = 'reviewer_submitted' WHERE status = 'manager_submitted'");
+  await pool.query("ALTER TABLE review_assignments DROP CONSTRAINT IF EXISTS review_assignments_status_check");
+  await pool.query("ALTER TABLE review_assignments ADD CONSTRAINT review_assignments_status_check CHECK(status IN ('assigned','self_submitted','reviewer_submitted','closed'))");
   await pool.query(`
     DO $$
     BEGIN
@@ -193,6 +197,29 @@ async function initDb() {
     )
   `);
   await pool.query("ALTER TABLE self_reviews ADD COLUMN IF NOT EXISTS assignee_user_id INTEGER REFERENCES users(id)");
+  await pool.query(`
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'self_reviews' AND column_name = 'employee_user_id'
+      ) THEN
+        EXECUTE 'ALTER TABLE self_reviews ALTER COLUMN employee_user_id DROP NOT NULL';
+      END IF;
+    END $$;
+  `);
+  await pool.query(`
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'self_reviews' AND column_name = 'employee_user_id'
+      ) THEN
+        EXECUTE 'UPDATE self_reviews SET employee_user_id = assignee_user_id WHERE employee_user_id IS NULL AND assignee_user_id IS NOT NULL';
+        EXECUTE 'UPDATE self_reviews SET assignee_user_id = employee_user_id WHERE assignee_user_id IS NULL AND employee_user_id IS NOT NULL';
+      END IF;
+    END $$;
+  `);
   await pool.query("UPDATE self_reviews sr SET assignee_user_id = ra.assignee_user_id FROM review_assignments ra WHERE sr.assignee_user_id IS NULL AND sr.assignment_id = ra.id");
   await pool.query("DELETE FROM self_reviews WHERE assignee_user_id IS NULL");
 
@@ -207,6 +234,29 @@ async function initDb() {
     )
   `);
   await pool.query("ALTER TABLE reviewer_reviews ADD COLUMN IF NOT EXISTS reviewer_user_id INTEGER REFERENCES users(id)");
+  await pool.query(`
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'reviewer_reviews' AND column_name = 'manager_user_id'
+      ) THEN
+        EXECUTE 'ALTER TABLE reviewer_reviews ALTER COLUMN manager_user_id DROP NOT NULL';
+      END IF;
+    END $$;
+  `);
+  await pool.query(`
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'reviewer_reviews' AND column_name = 'manager_user_id'
+      ) THEN
+        EXECUTE 'UPDATE reviewer_reviews SET manager_user_id = reviewer_user_id WHERE manager_user_id IS NULL AND reviewer_user_id IS NOT NULL';
+        EXECUTE 'UPDATE reviewer_reviews SET reviewer_user_id = manager_user_id WHERE reviewer_user_id IS NULL AND manager_user_id IS NOT NULL';
+      END IF;
+    END $$;
+  `);
   await pool.query("UPDATE reviewer_reviews rr SET reviewer_user_id = ra.reviewer_user_id FROM review_assignments ra WHERE rr.reviewer_user_id IS NULL AND rr.assignment_id = ra.id");
   await pool.query("DELETE FROM reviewer_reviews WHERE reviewer_user_id IS NULL");
 
@@ -283,8 +333,10 @@ app.post("/api/admin/assignments", auth, requireRole("admin"), async (req, res) 
       [assigneeUserId, reviewerUserId, reviewYear, dueDate, req.user.id]
     );
     return res.status(201).json({ message: "Review assigned.", id: created.rows[0].id });
-  } catch {
-    return res.status(500).json({ error: "Failed to assign review." });
+  } catch (e) {
+    if (e?.code === "23505") return res.status(409).json({ error: "Review already assigned for this year." });
+    if (e?.code === "23503") return res.status(400).json({ error: "Invalid assignee or reviewer user." });
+    return res.status(500).json({ error: `Failed to assign review: ${e?.message || "unknown error"}` });
   }
 });
 
@@ -776,8 +828,9 @@ async function createAssignmentByReviewer(req, res, assigneeRole) {
     );
     if (created.rowCount === 0) return res.status(409).json({ error: "Review already assigned for this year." });
     return res.status(201).json({ message: "Review assigned.", id: created.rows[0].id });
-  } catch {
-    return res.status(500).json({ error: "Failed to assign review." });
+  } catch (e) {
+    if (e?.code === "23503") return res.status(400).json({ error: "Invalid assignee user." });
+    return res.status(500).json({ error: `Failed to assign review: ${e?.message || "unknown error"}` });
   }
 }
 
@@ -788,7 +841,8 @@ app.get("/api/manager/assignments", auth, requireRole("manager"), async (req, re
   const rows = await pool.query(
     `SELECT ra.id, ra.review_year, ra.status, ra.created_at, ra.due_date,
             a.name AS assignee_name, a.email AS assignee_email,
-            (sr.id IS NOT NULL) AS self_submitted, (rr.id IS NOT NULL) AS reviewer_submitted
+            (sr.id IS NOT NULL) AS self_submitted, sr.overall_rating AS self_overall_rating, sr.payload AS self_payload,
+            (rr.id IS NOT NULL) AS reviewer_submitted
      FROM review_assignments ra
      JOIN users a ON a.id = ra.assignee_user_id
      LEFT JOIN self_reviews sr ON sr.assignment_id = ra.id

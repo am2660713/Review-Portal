@@ -46,8 +46,22 @@ async function loadSelfAssignments() {
 
 async function loadEmpAssignments() {
   const items = await api("/api/teamlead/assignments");
+  const renderSelfPayload = (p) => {
+    if (!p) return `<div class="meta">Self review not submitted yet.</div>`;
+    return `<div class="meta"><strong>Overall notes:</strong> ${p.selfComments ?? "-"}</div>
+      <div class="meta"><strong>Innovation:</strong> ${p.innovation ?? "-"} | <strong>Goal:</strong> ${p.goalAchievement ?? "-"} | <strong>Team Work:</strong> ${p.teamWork ?? "-"}</div>
+      <div class="meta"><strong>Commitment:</strong> ${p.commitment ?? "-"} | <strong>Technical:</strong> ${p.technicalLearning ?? "-"} | <strong>Support:</strong> ${p.softwareSupport ?? "-"}</div>
+      <div class="meta"><strong>Graphics:</strong> ${p.graphicsLearning ?? "-"} | <strong>Site:</strong> ${p.siteActivities ?? "-"} | <strong>Communication:</strong> ${p.communication ?? "-"}</div>
+      <div class="meta"><strong>Problem Solving:</strong> ${p.problemSolving ?? "-"} | <strong>Time:</strong> ${p.timeManagement ?? "-"}</div>
+      <div class="meta"><strong>Skills Learned:</strong> ${p.skillsLearned ?? "-"}</div>
+      <div class="meta"><strong>Development Work:</strong> ${p.softwareHardware ?? "-"}</div>
+      <div class="meta"><strong>Graphics Skills:</strong> ${p.graphicsSkills ?? "-"}</div>
+      <div class="meta"><strong>Site Activities Summary:</strong> ${p.siteActivitiesSummary ?? "-"}</div>
+      <div class="meta"><strong>Achievements:</strong> ${p.achievements ?? "-"}</div>
+      <div class="meta"><strong>Challenges:</strong> ${p.challenges ?? "-"}</div>`;
+  };
   empList.innerHTML = items.map(i => `
-    <article class="feedback-item"><strong>Assignment #${i.id} - ${i.assignee_name}</strong><div class="meta">${i.assignee_email} | Year: ${i.review_year} | Due: ${i.due_date ? String(i.due_date).slice(0,10) : "-"} | Self Submitted: ${i.self_submitted ? "Yes" : "No"} | Status: ${i.status}</div><details class="inline-details"><summary>View Employee Self Review</summary>${i.self_payload ? `<div class="meta">Innovation: ${i.self_payload.innovation ?? "-"} | Goal: ${i.self_payload.goalAchievement ?? "-"} | Team Work: ${i.self_payload.teamWork ?? "-"}</div><div class="meta">Technical: ${i.self_payload.technicalLearning ?? "-"} | Communication: ${i.self_payload.communication ?? "-"} | Time: ${i.self_payload.timeManagement ?? "-"}</div><div class="meta">Self Comments: ${i.self_payload.selfComments ?? "-"}</div>` : `<div class="meta">Self review not submitted yet.</div>`}</details><div class="row-actions"><button type="button" class="open-review-btn" data-id="${i.id}" ${i.status === "closed" || i.status === "reviewer_submitted" ? "disabled" : ""}>${i.status === "closed" || i.status === "reviewer_submitted" ? "Filled / Locked" : "Open Employee Review Form"}</button><button type="button" class="danger-btn" data-delete-id="${i.id}" ${i.status === "closed" || i.status === "reviewer_submitted" ? "disabled" : ""}>Delete Review Form</button></div></article>
+    <article class="feedback-item"><strong>Assignment #${i.id} - ${i.assignee_name}</strong><div class="meta">${i.assignee_email} | Year: ${i.review_year} | Due: ${i.due_date ? String(i.due_date).slice(0,10) : "-"} | Self Submitted: ${i.self_submitted ? "Yes" : "No"} | Status: ${i.status}</div><details class="inline-details"><summary>View Employee Self Review</summary>${renderSelfPayload(i.self_payload)}</details><div class="row-actions"><button type="button" class="open-review-btn" data-id="${i.id}" ${i.status === "closed" || i.status === "reviewer_submitted" ? "disabled" : ""}>${i.status === "closed" || i.status === "reviewer_submitted" ? "Filled / Locked" : "Open Employee Review Form"}</button><button type="button" class="danger-btn" data-delete-id="${i.id}" ${i.status === "closed" || i.status === "reviewer_submitted" ? "disabled" : ""}>Delete Review Form</button></div></article>
   `).join("") || "<p>No employee assignments yet.</p>";
 
   empList.querySelectorAll(".open-review-btn").forEach((btn) => btn.addEventListener("click", () => {

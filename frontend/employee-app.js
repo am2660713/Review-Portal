@@ -16,7 +16,7 @@ async function load() {
       <strong>Assignment #${i.id}</strong>
       <div class="meta">Reviewer: ${i.reviewer_name} (${i.reviewer_role}) | Year: ${i.review_year} | Due: ${i.due_date ? String(i.due_date).slice(0,10) : "-"} | Status: ${i.status}</div>
       <div class="row-actions">
-        <button type="button" class="use-assignment-btn" data-id="${i.id}" ${i.status === "closed" || i.status === "reviewer_submitted" ? "disabled" : ""}>${i.status === "closed" || i.status === "reviewer_submitted" ? "Filled / Locked" : "Open Review Form"}</button>
+        <button type="button" class="use-assignment-btn" data-id="${i.id}" ${i.status === "self_submitted" || i.status === "closed" || i.status === "reviewer_submitted" ? "disabled" : ""}>${i.status === "self_submitted" ? "Submitted" : (i.status === "closed" || i.status === "reviewer_submitted" ? "Filled / Locked" : "Open Review Form")}</button>
         <button type="button" class="view-reviewer-btn" data-id="${i.id}" ${(i.reviewer_submitted && i.reviewer_feedback_visible) ? "" : "disabled"}>${(i.reviewer_submitted && i.reviewer_feedback_visible) ? "View Reviewer Feedback" : "Feedback Not Shared"}</button>
       </div>
       <div id="reviewer-feedback-${i.id}" class="inline-details" style="display:none;"></div>
