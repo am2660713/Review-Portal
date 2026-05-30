@@ -1,5 +1,6 @@
 const apiHost = window.location.hostname || "localhost";
-export const API_BASE = `http://${apiHost}:3000`;
+const apiProtocol = window.location.protocol === "https:" ? "https:" : "http:";
+export const API_BASE = `${apiProtocol}//${apiHost}:3000`;
 
 export function getToken() { return localStorage.getItem("token") || ""; }
 export function getUser() { const raw = localStorage.getItem("user"); return raw ? JSON.parse(raw) : null; }
@@ -10,9 +11,19 @@ export async function api(path, options = {}) {
   const token = getToken();
   const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
   if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Request failed");
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  } catch {
+    throw new Error("Unable to reach server. Check backend is running and reachable.");
+  }
+
+  const rawText = await res.text();
+  let data = {};
+  if (rawText) {
+    try { data = JSON.parse(rawText); } catch { data = { error: rawText.slice(0, 180) }; }
+  }
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
   return data;
 }
 
