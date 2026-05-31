@@ -20,6 +20,10 @@ const moveEmployeeSelect = document.getElementById("moveEmployeeSelect");
 const moveLeadSelect = document.getElementById("moveLeadSelect");
 const transferStatus = document.getElementById("transferStatus");
 const overview = document.getElementById("overview");
+const promoteBtn = document.getElementById("promoteBtn");
+const promoteLeadBtn = document.getElementById("promoteLeadBtn");
+const reassignLeadBtn = document.getElementById("reassignLeadBtn");
+const moveEmployeeBtn = document.getElementById("moveEmployeeBtn");
 
 document.getElementById("logoutBtn").onclick = () => { clearSession(); window.location.href = "/"; };
 
@@ -136,12 +140,18 @@ document.getElementById("downloadTemplateBtn").onclick = () => {
   URL.revokeObjectURL(url);
 };
 document.getElementById("promoteBtn").onclick = async () => {
+  const employeeId = Number(promoteEmployeeSelect.value);
+  const managerId = Number(promoteManagerSelect.value);
+  if (!Number.isInteger(employeeId) || !Number.isInteger(managerId)) {
+    promoteStatus.textContent = "Please select both Employee and Manager.";
+    return;
+  }
   try {
     const data = await api("/api/admin/promote-employee", {
       method: "POST",
       body: JSON.stringify({
-        employeeUserId: Number(promoteEmployeeSelect.value),
-        managerUserId: Number(promoteManagerSelect.value),
+        employeeUserId: employeeId,
+        managerUserId: managerId,
         reviewYear: Number(reviewYear.value),
         dueDate: dueDate.value,
         cleanupPending: true
@@ -155,11 +165,16 @@ document.getElementById("promoteBtn").onclick = async () => {
   }
 };
 document.getElementById("promoteLeadBtn").onclick = async () => {
+  const teamleadId = Number(promoteLeadToManagerSelect.value);
+  if (!Number.isInteger(teamleadId)) {
+    transferStatus.textContent = "No Team Lead available to promote. Add or restore a team lead first.";
+    return;
+  }
   try {
     const data = await api("/api/admin/promote-teamlead", {
       method: "POST",
       body: JSON.stringify({
-        teamleadUserId: Number(promoteLeadToManagerSelect.value),
+        teamleadUserId: teamleadId,
         reviewYear: Number(reviewYear.value),
         dueDate: dueDate.value,
         cleanupPending: true
@@ -174,12 +189,18 @@ document.getElementById("promoteLeadBtn").onclick = async () => {
 };
 
 document.getElementById("reassignLeadBtn").onclick = async () => {
+  const teamleadId = Number(promoteLeadToManagerSelect.value);
+  const managerId = Number(reassignLeadManagerSelect.value);
+  if (!Number.isInteger(teamleadId) || !Number.isInteger(managerId)) {
+    transferStatus.textContent = "Please select both Team Lead and Manager.";
+    return;
+  }
   try {
     const data = await api("/api/admin/reassign-teamlead-manager", {
       method: "POST",
       body: JSON.stringify({
-        teamleadUserId: Number(promoteLeadToManagerSelect.value),
-        newManagerUserId: Number(reassignLeadManagerSelect.value),
+        teamleadUserId: teamleadId,
+        newManagerUserId: managerId,
         reviewYear: Number(reviewYear.value),
         dueDate: dueDate.value,
         cleanupPending: true
@@ -194,12 +215,18 @@ document.getElementById("reassignLeadBtn").onclick = async () => {
 };
 
 document.getElementById("moveEmployeeBtn").onclick = async () => {
+  const employeeId = Number(moveEmployeeSelect.value);
+  const leadId = Number(moveLeadSelect.value);
+  if (!Number.isInteger(employeeId) || !Number.isInteger(leadId)) {
+    transferStatus.textContent = "Please select both Employee and New Team Lead.";
+    return;
+  }
   try {
     const data = await api("/api/admin/reassign-employee-lead", {
       method: "POST",
       body: JSON.stringify({
-        employeeUserId: Number(moveEmployeeSelect.value),
-        newTeamleadUserId: Number(moveLeadSelect.value),
+        employeeUserId: employeeId,
+        newTeamleadUserId: leadId,
         reviewYear: Number(reviewYear.value),
         dueDate: dueDate.value,
         cleanupPending: true
@@ -240,12 +267,31 @@ async function loadUsers() {
   reviewerSelect.innerHTML = reviewers.map(u => `<option value="${u.id}">${u.name} (${u.role}) - ${u.email}</option>`).join("");
   joinerLeadSelect.innerHTML = leads.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("");
   joinerManagerSelect.innerHTML = managers.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("");
-  promoteEmployeeSelect.innerHTML = employees.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("");
-  promoteManagerSelect.innerHTML = managers.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("");
-  promoteLeadToManagerSelect.innerHTML = leads.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("");
-  reassignLeadManagerSelect.innerHTML = managers.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("");
-  moveEmployeeSelect.innerHTML = employees.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("");
-  moveLeadSelect.innerHTML = leads.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("");
+  promoteEmployeeSelect.innerHTML = employees.length
+    ? employees.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("")
+    : `<option value="">No employee available</option>`;
+  promoteManagerSelect.innerHTML = managers.length
+    ? managers.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("")
+    : `<option value="">No manager available</option>`;
+  promoteLeadToManagerSelect.innerHTML = leads.length
+    ? leads.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("")
+    : `<option value="">No team lead available</option>`;
+  reassignLeadManagerSelect.innerHTML = managers.length
+    ? managers.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("")
+    : `<option value="">No manager available</option>`;
+  moveEmployeeSelect.innerHTML = employees.length
+    ? employees.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("")
+    : `<option value="">No employee available</option>`;
+  moveLeadSelect.innerHTML = leads.length
+    ? leads.map(u => `<option value="${u.id}">${u.name} - ${u.email}</option>`).join("")
+    : `<option value="">No team lead available</option>`;
+
+  promoteBtn.disabled = !employees.length || !managers.length;
+  promoteLeadBtn.disabled = !leads.length;
+  reassignLeadBtn.disabled = !leads.length || !managers.length;
+  moveEmployeeBtn.disabled = !employees.length || !leads.length;
+
+  if (!employees.length) promoteStatus.textContent = "No employee left to promote. Add employee or move role back to employee.";
 }
 
 function renderSelf(row) {

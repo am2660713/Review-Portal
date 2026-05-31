@@ -52,6 +52,7 @@
         <label>Promote Employee to Team Lead<select id="promoteEmployeeSelect"></select></label>
         <label>Assign Reporting Manager<select id="promoteManagerSelect"></select></label>
       </div>
+      <p class="meta">Reporting Manager is required only when converting an employee into a team lead.</p>
       <div class="row-actions">
         <button id="promoteBtn" type="button">Promote and Update Hierarchy</button>
       </div>
@@ -59,12 +60,19 @@
     </section>
     <section class="card">
       <h2>Team Lead and Employee Transfer</h2>
+      <h3>Promote Team Lead to Manager</h3>
       <div class="grid two">
-        <label>Promote Team Lead to Manager<select id="promoteLeadToManagerSelect"></select></label>
-        <label>New Manager for Team Lead<select id="reassignLeadManagerSelect"></select></label>
+        <label>Team Lead<select id="promoteLeadToManagerSelect"></select></label>
       </div>
       <div class="row-actions">
         <button id="promoteLeadBtn" type="button">Promote Team Lead to Manager</button>
+      </div>
+      <h3>Reassign Team Lead to Manager</h3>
+      <div class="grid two">
+        <label>Team Lead<select id="reassignLeadSelect"></select></label>
+        <label>New Manager for Team Lead<select id="reassignLeadManagerSelect"></select></label>
+      </div>
+      <div class="row-actions">
         <button id="reassignLeadBtn" type="button" class="secondary">Reassign Team Lead to Manager</button>
       </div>
       <div class="grid two">

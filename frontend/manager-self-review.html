@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -9,38 +9,50 @@
 <body>
   <main class="wrap">
     <section class="hero card">
-      <p class="tag">Manager Self Review</p>
+      <p class="tag">Self Performance Review</p>
       <h1 id="selfTitle">My Self Review Form</h1>
-      <p>Complete all compulsory points for your own assigned review.</p>
-      <button id="backBtn" class="secondary">Back to Manager Page</button>
+      <p>Complete all required points and submit your self review.</p>
+      <button id="backBtn" class="secondary">Back to Dashboard</button>
       <button id="logoutBtn" class="secondary">Logout</button>
     </section>
 
-    <section class="card">
-      <h2>Self Review Form</h2>
+    <section class="card review-form-card">
+      <h2>Self Review (Excel Coverage)</h2>
+      <div class="rating-guide">
+        <h3>Rating Guide (1 to 5)</h3>
+        <ul>
+          <li><strong>1:</strong> Needs major improvement</li>
+          <li><strong>2:</strong> Below expectations</li>
+          <li><strong>3:</strong> Meets expectations</li>
+          <li><strong>4:</strong> Exceeds expectations</li>
+          <li><strong>5:</strong> Outstanding performance</li>
+        </ul>
+      </div>
       <form id="selfReviewForm">
-        <label>Assignment ID<input id="assignmentId" type="number" required readonly /></label>
+        <label><span class="required-text">Assignment ID</span><input id="assignmentId" type="number" required readonly /></label>
+        <h3>Consistency Scale Ratings (1-5)</h3>
         <div class="grid three">
-          <label>Innovation<select id="innovation" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Goal Achievement<select id="goalAchievement" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Team Work<select id="teamWork" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Commitment<select id="commitment" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Technical Learning<select id="technicalLearning" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Software Support<select id="softwareSupport" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Graphics Learning<select id="graphicsLearning" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Site Activities<select id="siteActivitiesRating" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Communication<select id="communication" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Problem Solving<select id="problemSolving" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Time Management<select id="timeManagement" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Overall Rating<select id="overallRating" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <div class="star-field"><label class="required-label">Innovation</label><div class="star-rating" data-target="innovation"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="innovation" type="hidden" required /><textarea id="innovationNote" rows="2" placeholder="Innovation comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Goal Achievement</label><div class="star-rating" data-target="goalAchievement"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="goalAchievement" type="hidden" required /><textarea id="goalAchievementNote" rows="2" placeholder="Goal achievement comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Team Work</label><div class="star-rating" data-target="teamWork"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="teamWork" type="hidden" required /><textarea id="teamWorkNote" rows="2" placeholder="Team work comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Commitment</label><div class="star-rating" data-target="commitment"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="commitment" type="hidden" required /><textarea id="commitmentNote" rows="2" placeholder="Commitment comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Technical Learning</label><div class="star-rating" data-target="technicalLearning"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="technicalLearning" type="hidden" required /><textarea id="technicalLearningNote" rows="2" placeholder="Technical learning comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Software Support</label><div class="star-rating" data-target="softwareSupport"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="softwareSupport" type="hidden" required /><textarea id="softwareSupportNote" rows="2" placeholder="Software support comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Graphics Learning</label><div class="star-rating" data-target="graphicsLearning"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="graphicsLearning" type="hidden" required /><textarea id="graphicsLearningNote" rows="2" placeholder="Graphics learning comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Site Activities</label><div class="star-rating" data-target="siteActivitiesRating"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="siteActivitiesRating" type="hidden" required /><textarea id="siteActivitiesRatingNote" rows="2" placeholder="Site activities comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Communication</label><div class="star-rating" data-target="communication"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="communication" type="hidden" required /><textarea id="communicationNote" rows="2" placeholder="Communication comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Problem Solving</label><div class="star-rating" data-target="problemSolving"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="problemSolving" type="hidden" required /><textarea id="problemSolvingNote" rows="2" placeholder="Problem solving comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Time Management</label><div class="star-rating" data-target="timeManagement"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="timeManagement" type="hidden" required /><textarea id="timeManagementNote" rows="2" placeholder="Time management comment" required></textarea></div>
+          <div class="star-field"><label class="required-label">Overall Rating</label><div class="star-rating" data-target="overallRating"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="overallRating" type="hidden" required /><textarea id="overallRatingNote" rows="2" placeholder="Overall rating comment" required></textarea></div>
         </div>
-        <label>Software / Hardware Skills Learned<textarea id="skillsLearned" rows="3" required></textarea></label>
-        <label>Programming and Development Work<textarea id="softwareHardware" rows="3" required></textarea></label>
-        <label>Graphics Software Learned<textarea id="graphicsSkills" rows="3" required></textarea></label>
-        <label>Site Activities<textarea id="siteActivities" rows="3" required></textarea></label>
-        <label>Key Achievements<textarea id="achievements" rows="3" required></textarea></label>
-        <label>Challenges / Improvement Areas<textarea id="challenges" rows="3" required></textarea></label>
-        <label>Self Comments<textarea id="selfComments" rows="4" required></textarea></label>
+        <h3>Detailed Inputs</h3>
+        <label><span class="required-text">Software / Hardware Skills Learned</span><textarea id="skillsLearned" rows="3" required></textarea></label>
+        <label><span class="required-text">Programming and Development Work</span><textarea id="softwareHardware" rows="3" required></textarea></label>
+        <label><span class="required-text">Graphics Software Learned</span><textarea id="graphicsSkills" rows="3" required></textarea></label>
+        <label><span class="required-text">Site Activities</span><textarea id="siteActivities" rows="3" required></textarea></label>
+        <label><span class="required-text">Key Achievements</span><textarea id="achievements" rows="3" required></textarea></label>
+        <label><span class="required-text">Challenges / Improvement Areas</span><textarea id="challenges" rows="3" required></textarea></label>
+        <label><span class="required-text">Self Comments</span><textarea id="selfComments" rows="4" required></textarea></label>
         <button type="submit">Submit Self Review</button>
         <p id="status" class="status"></p>
       </form>

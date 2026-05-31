@@ -1,27 +1,40 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
-<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Team Lead Employee Review</title><link rel="stylesheet" href="./styles.css" /></head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Lead Employee Review</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
 <body>
   <main class="wrap">
-    <section class="hero card"><p class="tag">Team Lead Evaluation</p><h1>Employee Review Form</h1><button id="backBtn" class="secondary">Back</button><button id="logoutBtn" class="secondary">Logout</button></section>
-    <section class="card">
+    <section class="hero card">
+      <p class="tag">Team Lead Evaluation</p>
+      <h1>Employee Review Form</h1>
+      <p>Give star ratings and mandatory comments for each section.</p>
+      <button id="backBtn" class="secondary">Back</button>
+      <button id="logoutBtn" class="secondary">Logout</button>
+    </section>
+    <section class="card review-form-card">
       <form id="reviewForm">
-        <label>Assignment ID<input id="assignmentId" type="number" required readonly /></label>
+        <label><span class="required-text">Assignment ID</span><input id="assignmentId" type="number" required readonly /></label>
+        <h3>Team Lead Ratings (1-5)</h3>
         <div class="grid three">
-          <label>Quality<select id="quality" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Productivity<select id="productivity" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Job Knowledge<select id="jobKnowledge" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Communication<select id="communication" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Teamwork<select id="teamwork" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Initiative<select id="initiative" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Reliability<select id="reliability" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Leadership<select id="leadership" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
-          <label>Overall<select id="overallRating" required><option value="">Select</option><option value="1">*.... (1)</option><option value="2">**... (2)</option><option value="3">***.. (3)</option><option value="4">****. (4)</option><option value="5">***** (5)</option></select></label>
+          <div class="star-field"><label class="required-label">Quality</label><div class="star-rating" data-target="quality"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="quality" type="hidden" required /><textarea id="qualityNote" rows="2" placeholder="Quality note" required></textarea></div>
+          <div class="star-field"><label class="required-label">Productivity</label><div class="star-rating" data-target="productivity"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="productivity" type="hidden" required /><textarea id="productivityNote" rows="2" placeholder="Productivity note" required></textarea></div>
+          <div class="star-field"><label class="required-label">Job Knowledge</label><div class="star-rating" data-target="jobKnowledge"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="jobKnowledge" type="hidden" required /><textarea id="jobKnowledgeNote" rows="2" placeholder="Job knowledge note" required></textarea></div>
+          <div class="star-field"><label class="required-label">Communication</label><div class="star-rating" data-target="communication"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="communication" type="hidden" required /><textarea id="communicationNote" rows="2" placeholder="Communication note" required></textarea></div>
+          <div class="star-field"><label class="required-label">Teamwork</label><div class="star-rating" data-target="teamwork"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="teamwork" type="hidden" required /><textarea id="teamworkNote" rows="2" placeholder="Teamwork note" required></textarea></div>
+          <div class="star-field"><label class="required-label">Initiative</label><div class="star-rating" data-target="initiative"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="initiative" type="hidden" required /><textarea id="initiativeNote" rows="2" placeholder="Initiative note" required></textarea></div>
+          <div class="star-field"><label class="required-label">Reliability</label><div class="star-rating" data-target="reliability"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="reliability" type="hidden" required /><textarea id="reliabilityNote" rows="2" placeholder="Reliability note" required></textarea></div>
+          <div class="star-field"><label class="required-label">Leadership</label><div class="star-rating" data-target="leadership"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="leadership" type="hidden" required /><textarea id="leadershipNote" rows="2" placeholder="Leadership note" required></textarea></div>
+          <div class="star-field"><label class="required-label">Overall Rating</label><div class="star-rating" data-target="overallRating"><button type="button" class="star-btn" data-value="1">&#9733;</button><button type="button" class="star-btn" data-value="2">&#9733;</button><button type="button" class="star-btn" data-value="3">&#9733;</button><button type="button" class="star-btn" data-value="4">&#9733;</button><button type="button" class="star-btn" data-value="5">&#9733;</button></div><input id="overallRating" type="hidden" required /><textarea id="overallRatingNote" rows="2" placeholder="Overall note" required></textarea></div>
         </div>
-        <label>Strengths<textarea id="strengths" rows="3" required></textarea></label>
-        <label>Improvements<textarea id="improvements" rows="3" required></textarea></label>
-        <label>Development Plan<textarea id="developmentPlan" rows="3" required></textarea></label>
-        <label>Comments<textarea id="comments" rows="4" required></textarea></label>
+        <h3>Final Comments</h3>
+        <label><span class="required-text">Strengths</span><textarea id="strengths" rows="3" required></textarea></label>
+        <label><span class="required-text">Improvements</span><textarea id="improvements" rows="3" required></textarea></label>
+        <label><span class="required-text">Development Plan</span><textarea id="developmentPlan" rows="3" required></textarea></label>
+        <label><span class="required-text">Comments</span><textarea id="comments" rows="4" required></textarea></label>
         <button type="submit">Submit Employee Review</button>
         <p id="status" class="status"></p>
       </form>

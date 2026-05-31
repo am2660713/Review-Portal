@@ -96,6 +96,11 @@ async function seedUser({ name, email, role, password }) {
   return created.rows[0].id;
 }
 
+async function ensureUserRole(email, role) {
+  const normalizedEmail = String(email).trim().toLowerCase();
+  await pool.query("UPDATE users SET role = $1 WHERE email = $2", [role, normalizedEmail]);
+}
+
 async function findOrCreateUser({ name, email, role, password }) {
   const normalizedEmail = String(email).trim().toLowerCase();
   const existing = await pool.query("SELECT id, role FROM users WHERE email = $1 LIMIT 1", [normalizedEmail]);
@@ -113,10 +118,34 @@ async function findOrCreateUser({ name, email, role, password }) {
 }
 
 async function upsertAssignment({ assigneeUserId, reviewerUserId, reviewYear, dueDate, createdBy }) {
+  const existing = await pool.query(
+    `SELECT id FROM review_assignments
+     WHERE assignee_user_id = $1 AND reviewer_user_id = $2 AND review_year = $3
+     LIMIT 1`,
+    [assigneeUserId, reviewerUserId, reviewYear]
+  );
+  if (existing.rowCount > 0) return false;
+
   const result = await pool.query(
     `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
      VALUES ($1,$2,$3,$4,'assigned',$5)
-     ON CONFLICT (assignee_user_id, reviewer_user_id, review_year) DO NOTHING
+     RETURNING id`,
+    [assigneeUserId, reviewerUserId, reviewYear, dueDate, createdBy]
+  );
+  return result.rowCount > 0;
+}
+
+async function upsertAssignmentWithClient(client, { assigneeUserId, reviewerUserId, reviewYear, dueDate, createdBy }) {
+  const existing = await client.query(
+    `SELECT id FROM review_assignments
+     WHERE assignee_user_id = $1 AND reviewer_user_id = $2 AND review_year = $3
+     LIMIT 1`,
+    [assigneeUserId, reviewerUserId, reviewYear]
+  );
+  if (existing.rowCount > 0) return false;
+  const result = await client.query(
+    `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
+     VALUES ($1,$2,$3,$4,'assigned',$5)
      RETURNING id`,
     [assigneeUserId, reviewerUserId, reviewYear, dueDate, createdBy]
   );
@@ -264,6 +293,10 @@ async function initDb() {
   const managerId = await seedUser({ name: "Chinmay Modak", email: MANAGER_EMAIL, role: "manager", password: MANAGER_PASSWORD });
   const teamLeadId = await seedUser({ name: "Team Lead One", email: TEAMLEAD_EMAIL, role: "teamlead", password: TEAMLEAD_PASSWORD });
   const employeeId = await seedUser({ name: "Akash Mittal", email: EMPLOYEE_EMAIL, role: "employee", password: EMPLOYEE_PASSWORD });
+  await ensureUserRole(ADMIN_EMAIL, "admin");
+  await ensureUserRole(MANAGER_EMAIL, "manager");
+  await ensureUserRole(TEAMLEAD_EMAIL, "teamlead");
+  await ensureUserRole(EMPLOYEE_EMAIL, "employee");
 
   await pool.query(
     `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
@@ -321,9 +354,14 @@ async function validateHierarchy(reviewerUserId, assigneeUserId) {
 }
 
 app.post("/api/admin/assignments", auth, requireRole("admin"), async (req, res) => {
-  const { assigneeUserId, reviewerUserId, reviewYear, dueDate } = req.body;
-  if (!assigneeUserId || !reviewerUserId || !reviewYear || !dueDate) return res.status(400).json({ error: "assigneeUserId, reviewerUserId, reviewYear, dueDate required." });
-  const hierarchyErr = await validateHierarchy(Number(reviewerUserId), Number(assigneeUserId));
+  const assigneeUserId = Number(req.body?.assigneeUserId);
+  const reviewerUserId = Number(req.body?.reviewerUserId);
+  const reviewYear = Number(req.body?.reviewYear);
+  const dueDate = String(req.body?.dueDate || "").trim();
+  if (!Number.isInteger(assigneeUserId) || !Number.isInteger(reviewerUserId) || !Number.isInteger(reviewYear) || !dueDate) {
+    return res.status(400).json({ error: "assigneeUserId, reviewerUserId, reviewYear, dueDate required." });
+  }
+  const hierarchyErr = await validateHierarchy(reviewerUserId, assigneeUserId);
   if (hierarchyErr) return res.status(400).json({ error: hierarchyErr });
   try {
     const created = await pool.query(
@@ -372,14 +410,14 @@ app.post("/api/admin/assignments/bulk", auth, requireRole("admin"), async (req, 
     let created = 0;
     let skipped = 0;
     for (const p of pairs.rows) {
-      const result = await pool.query(
-        `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
-         VALUES ($1,$2,$3,$4,'assigned',$5)
-         ON CONFLICT (assignee_user_id, reviewer_user_id, review_year) DO NOTHING
-         RETURNING id`,
-        [p.assignee_user_id, p.reviewer_user_id, year, dueDate, req.user.id]
-      );
-      if (result.rowCount > 0) created += 1;
+      const inserted = await upsertAssignment({
+        assigneeUserId: p.assignee_user_id,
+        reviewerUserId: p.reviewer_user_id,
+        reviewYear: year,
+        dueDate,
+        createdBy: req.user.id
+      });
+      if (inserted) created += 1;
       else skipped += 1;
     }
 
@@ -550,23 +588,8 @@ app.post("/api/admin/promote-employee", auth, requireRole("admin"), async (req, 
     }
 
     let created = 0;
-    const a1 = await client.query(
-      `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
-       VALUES ($1,$2,$3,$4,'assigned',$5)
-       ON CONFLICT (assignee_user_id, reviewer_user_id, review_year) DO NOTHING
-       RETURNING id`,
-      [managerId, adminId, year, dueDate, req.user.id]
-    );
-    if (a1.rowCount > 0) created += 1;
-
-    const a2 = await client.query(
-      `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
-       VALUES ($1,$2,$3,$4,'assigned',$5)
-       ON CONFLICT (assignee_user_id, reviewer_user_id, review_year) DO NOTHING
-       RETURNING id`,
-      [employeeId, managerId, year, dueDate, req.user.id]
-    );
-    if (a2.rowCount > 0) created += 1;
+    if (await upsertAssignmentWithClient(client, { assigneeUserId: managerId, reviewerUserId: adminId, reviewYear: year, dueDate, createdBy: req.user.id })) created += 1;
+    if (await upsertAssignmentWithClient(client, { assigneeUserId: employeeId, reviewerUserId: managerId, reviewYear: year, dueDate, createdBy: req.user.id })) created += 1;
 
     await client.query("COMMIT");
     return res.json({
@@ -574,9 +597,9 @@ app.post("/api/admin/promote-employee", auth, requireRole("admin"), async (req, 
       assignmentsCreated: created,
       pendingAssignmentsCleaned: cleaned
     });
-  } catch {
+  } catch (e) {
     await client.query("ROLLBACK");
-    return res.status(500).json({ error: "Failed to promote employee." });
+    return res.status(500).json({ error: `Failed to promote employee: ${e?.message || "unknown error"}` });
   } finally {
     client.release();
   }
@@ -612,9 +635,9 @@ app.post("/api/admin/promote-teamlead", auth, requireRole("admin"), async (req, 
 
     await client.query("COMMIT");
     return res.json({ message: "Team Lead promoted to Manager.", pendingAssignmentsCleaned: cleaned });
-  } catch {
+  } catch (e) {
     await client.query("ROLLBACK");
-    return res.status(500).json({ error: "Failed to promote team lead." });
+    return res.status(500).json({ error: `Failed to promote team lead: ${e?.message || "unknown error"}` });
   } finally {
     client.release();
   }
@@ -658,30 +681,18 @@ app.post("/api/admin/reassign-teamlead-manager", auth, requireRole("admin"), asy
       cleaned = old.rowCount;
     }
 
-    const a1 = await client.query(
-      `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
-       VALUES ($1,$2,$3,$4,'assigned',$5)
-       ON CONFLICT (assignee_user_id, reviewer_user_id, review_year) DO NOTHING
-       RETURNING id`,
-      [managerId, adminId, year, dueDate, req.user.id]
-    );
-    const a2 = await client.query(
-      `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
-       VALUES ($1,$2,$3,$4,'assigned',$5)
-       ON CONFLICT (assignee_user_id, reviewer_user_id, review_year) DO NOTHING
-       RETURNING id`,
-      [teamleadId, managerId, year, dueDate, req.user.id]
-    );
+    const a1 = await upsertAssignmentWithClient(client, { assigneeUserId: managerId, reviewerUserId: adminId, reviewYear: year, dueDate, createdBy: req.user.id });
+    const a2 = await upsertAssignmentWithClient(client, { assigneeUserId: teamleadId, reviewerUserId: managerId, reviewYear: year, dueDate, createdBy: req.user.id });
 
     await client.query("COMMIT");
     return res.json({
       message: "Team Lead reassigned to new Manager.",
-      assignmentsCreated: (a1.rowCount > 0 ? 1 : 0) + (a2.rowCount > 0 ? 1 : 0),
+      assignmentsCreated: (a1 ? 1 : 0) + (a2 ? 1 : 0),
       pendingAssignmentsCleaned: cleaned
     });
-  } catch {
+  } catch (e) {
     await client.query("ROLLBACK");
-    return res.status(500).json({ error: "Failed to reassign team lead." });
+    return res.status(500).json({ error: `Failed to reassign team lead: ${e?.message || "unknown error"}` });
   } finally {
     client.release();
   }
@@ -740,37 +751,19 @@ app.post("/api/admin/reassign-employee-lead", auth, requireRole("admin"), async 
       cleaned = old.rowCount;
     }
 
-    const a1 = await client.query(
-      `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
-       VALUES ($1,$2,$3,$4,'assigned',$5)
-       ON CONFLICT (assignee_user_id, reviewer_user_id, review_year) DO NOTHING
-       RETURNING id`,
-      [managerId, adminId, year, dueDate, req.user.id]
-    );
-    const a2 = await client.query(
-      `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
-       VALUES ($1,$2,$3,$4,'assigned',$5)
-       ON CONFLICT (assignee_user_id, reviewer_user_id, review_year) DO NOTHING
-       RETURNING id`,
-      [leadId, managerId, year, dueDate, req.user.id]
-    );
-    const a3 = await client.query(
-      `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
-       VALUES ($1,$2,$3,$4,'assigned',$5)
-       ON CONFLICT (assignee_user_id, reviewer_user_id, review_year) DO NOTHING
-       RETURNING id`,
-      [employeeId, leadId, year, dueDate, req.user.id]
-    );
+    const a1 = await upsertAssignmentWithClient(client, { assigneeUserId: managerId, reviewerUserId: adminId, reviewYear: year, dueDate, createdBy: req.user.id });
+    const a2 = await upsertAssignmentWithClient(client, { assigneeUserId: leadId, reviewerUserId: managerId, reviewYear: year, dueDate, createdBy: req.user.id });
+    const a3 = await upsertAssignmentWithClient(client, { assigneeUserId: employeeId, reviewerUserId: leadId, reviewYear: year, dueDate, createdBy: req.user.id });
 
     await client.query("COMMIT");
     return res.json({
       message: "Employee moved to new Team Lead and hierarchy synced.",
-      assignmentsCreated: (a1.rowCount > 0 ? 1 : 0) + (a2.rowCount > 0 ? 1 : 0) + (a3.rowCount > 0 ? 1 : 0),
+      assignmentsCreated: (a1 ? 1 : 0) + (a2 ? 1 : 0) + (a3 ? 1 : 0),
       pendingAssignmentsCleaned: cleaned
     });
-  } catch {
+  } catch (e) {
     await client.query("ROLLBACK");
-    return res.status(500).json({ error: "Failed to move employee." });
+    return res.status(500).json({ error: `Failed to move employee: ${e?.message || "unknown error"}` });
   } finally {
     client.release();
   }
@@ -819,14 +812,20 @@ async function createAssignmentByReviewer(req, res, assigneeRole) {
   if (hierarchyErr) return res.status(400).json({ error: hierarchyErr });
 
   try {
+    const exists = await pool.query(
+      `SELECT id FROM review_assignments
+       WHERE assignee_user_id = $1 AND reviewer_user_id = $2 AND review_year = $3
+       LIMIT 1`,
+      [assigneeUserId, req.user.id, Number(reviewYear)]
+    );
+    if (exists.rowCount > 0) return res.status(409).json({ error: "Review already assigned for this year." });
+
     const created = await pool.query(
       `INSERT INTO review_assignments (assignee_user_id, reviewer_user_id, review_year, due_date, status, created_by)
        VALUES ($1,$2,$3,$4,'assigned',$2)
-       ON CONFLICT (assignee_user_id, reviewer_user_id, review_year) DO NOTHING
        RETURNING id`,
       [assigneeUserId, req.user.id, Number(reviewYear), dueDate]
     );
-    if (created.rowCount === 0) return res.status(409).json({ error: "Review already assigned for this year." });
     return res.status(201).json({ message: "Review assigned.", id: created.rows[0].id });
   } catch (e) {
     if (e?.code === "23503") return res.status(400).json({ error: "Invalid assignee user." });
